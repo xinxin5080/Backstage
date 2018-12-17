@@ -19,7 +19,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // 没有token时,不是首页就跳回首页
     if (to.name !== 'login') {
-      next('/')
+      next('/login')
     } else {
       // 是首页就下一步
       next()

@@ -5,16 +5,22 @@ Vue.use(Router)
 
 export default new Router({
   routes: [{
-    path: '/',
+    path: '/login',
     name: 'login',
     // 按需加载，作用是吧login当成文件名的js
     component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
   },
   {
-    path: '/home',
+    path: '/',
     name: 'home',
-    // 按需加载，作用是吧login当成文件名的js
-    component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue')
+    component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue'),
+    // 重定项
+    redirect: { name: 'users' },
+    children: [{
+      path: 'users',
+      name: 'users',
+      component: () => import(/* webpackChunkName: "users" */ '../views/Users.vue') }
+    ]
   }
   ]
 })

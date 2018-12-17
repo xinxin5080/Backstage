@@ -10,8 +10,8 @@ axios.interceptors.request.use(function (config) {
   console.log(mytoken)
   // 判断有无token
   if (mytoken) {
-    config.headers.Authorization = mytoken
     // 设置进请求头config.headers是请求头,Authorization是后台要传递的
+    config.headers.Authorization = mytoken
   }
 
   return config
@@ -23,6 +23,6 @@ axios.interceptors.request.use(function (config) {
 // 一句话是可以去掉return,大括号
 export const Login = obj => axios.post('/login', obj)
 // 2.0用户数据列表
-export const getUser = obj => {
-  return axios.get('/users', { params: obj })
-}
+// export const getUser = obj => {
+//   return axios.get('/users', { params: obj })
+// }
