@@ -42,27 +42,16 @@ export default {
     headLogin (str) {
       this.$refs[str].validate(isOk => {
         if (isOk) {
-          // axios
-          //   .post('http://localhost:8888/api/private/v1/login', {
-          //     username: this.loginForm.name,
-          //     password: this.loginForm.password
-          //   })
-          //   .then(res => {
-          //     console.log(res.data)
-          //     if (res.data.meta.status === 200) {
-          //       this.$message(res.data.meta.msg)
-          //       this.$router.push({ name: 'home' })
-          //     } else {
-          //       this.$message.error(res.data.meta.msg)
-          //     }
-          //   })
           // 调用传递过来的接口,以对象的形式传递参数(post)
           Login({ username: this.loginForm.name, password: this.loginForm.password })
           // 用.then来接收
             .then(res => {
               console.log(res.data)
               if (res.data.meta.status === 200) {
+                // 本地存储token,参数1:名字自定义,参数2:获取的token
+                localStorage.setItem('mytoken', res.data.data.token)
                 this.$message(res.data.meta.msg)
+                // 跳转
                 this.$router.push({ name: 'home' })
               } else {
                 this.$message.error(res.data.meta.msg)
