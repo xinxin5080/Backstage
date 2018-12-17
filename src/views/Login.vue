@@ -50,6 +50,8 @@ export default {
               if (res.data.meta.status === 200) {
                 // 本地存储token,参数1:名字自定义,参数2:获取的token
                 localStorage.setItem('mytoken', res.data.data.token)
+                // 从后台获取名字,本地存储
+                localStorage.setItem('username', res.data.data.username)
                 this.$message(res.data.meta.msg)
                 // 跳转
                 this.$router.push({ name: 'home' })
