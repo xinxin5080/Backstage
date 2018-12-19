@@ -31,7 +31,7 @@
       <div class="el-icon-menu toggle-btn" @click="getcollapse"></div>
       <span class="system-title">后台管理系统</span>
       <div>
-        <span class="welcome">你好{{username}}</span>
+        <span class="welcome">你好:{{username}}</span>
        <el-button type="warning" plain @click="del">退出</el-button>
       </div>
     </el-header>

@@ -30,3 +30,6 @@ export const getUser = obj => {
 export const AddUsers = obj => {
   return axios.post('/users', obj)
 }
+
+// 4.0删除用户
+export const getDelete = id => axios.delete(`/users/${id}`)

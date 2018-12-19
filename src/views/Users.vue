@@ -47,9 +47,10 @@
     </el-table-column>
     <el-table-column
       label="操作">
+      <!-- scope.row可以获取所在行的信息 -->
       <template slot-scope="scope">
          <el-button type="primary" plain size="small"  icon="el-icon-edit"></el-button>
-         <el-button type="danger" plain size="small"  icon="el-icon-delete"></el-button>
+         <el-button type="danger" plain size="small"  icon="el-icon-delete" @click="headDelete(scope.row.id)"></el-button>
          <el-button type="info" plain size="small"  icon="el-icon-check"></el-button>
       </template>
     </el-table-column>
@@ -66,7 +67,7 @@
       :total="total">
     </el-pagination>
     <!-- 添加用户弹框 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogFormVisible">
+    <el-dialog title="添加用户" :before-close="handleClose" :visible.sync="addDialogFormVisible">
   <el-form :model="Userform" :rules="rules" ref="addstr">
     <el-form-item label="用户名" prop="username" :label-width="formLabelWidth">
       <el-input v-model="Userform.username"  auto-complete="off"></el-input>
@@ -82,14 +83,14 @@
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="addDialogFormVisible = false">取 消</el-button>
+    <el-button @click="quxiao">取 消</el-button>
     <el-button type="primary" @click="add('addstr')">确 定</el-button>
   </div>
 </el-dialog>
   </div>
 </template>
 <script>
-import { getUser, AddUsers } from '@/api'
+import { getUser, AddUsers, getDelete } from '@/api'
 export default {
   data () {
     // 自定义效验
@@ -162,7 +163,7 @@ export default {
         pagesize: this.pagesize
       }).then(res => {
         if (res.data.meta.status === 200) {
-          console.log(res.data)
+          // console.log(res.data)
           this.tableData = res.data.data.users
           // 获取总页数
           this.total = res.data.data.total
@@ -178,11 +179,11 @@ export default {
       // 清空
       this.seekVal = ''
     },
-    // 点击
+    // 3.0点击添加用户
     addatr () {
       this.addDialogFormVisible = true
     },
-    // 点击确定
+    // 3.0点击确定
     add (aa) {
       this.addDialogFormVisible = false
       // 效验正确再发请求
@@ -194,8 +195,48 @@ export default {
               console.log(res)
               // 刷新
               this.init()
+              // 清空
+              this.Userform = {}
             })
         }
+      })
+    },
+    // 3.0优化取消添加
+    quxiao () {
+      this.addDialogFormVisible = false
+      // 点击取消.执行一个方法来清除错误信息
+      this.$refs.addstr.clearValidate()
+    },
+    // 3.0关闭对话框时清除错误信息
+    handleClose (dome) {
+      this.$refs.addstr.clearValidate()
+      this.addDialogFormVisible = false
+    },
+    // 4.0点击删除,id是点击时传递的row.id
+    headDelete (id) {
+      // 4.0弹框
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 4.0删除请求
+        getDelete(id)
+          .then(res => {
+            if (res.data.meta.status === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+            } else {
+              this.$message.error(res.data.meta.msg)
+            }
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   },
