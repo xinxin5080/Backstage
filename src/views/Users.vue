@@ -41,6 +41,7 @@
        <template slot-scope="scope">
        <el-switch
        @change="amendUser(scope.row)"
+       :disabled="scope.row.username==='admin'"
         v-model="scope.row.mg_state"
         active-color="#13ce66"
         inactive-color="#ff4949">
@@ -51,9 +52,15 @@
       label="操作">
       <!-- scope.row可以获取所在行的信息 -->
       <template slot-scope="scope">
-         <el-button type="primary" plain size="small"  icon="el-icon-edit"></el-button>
+        <el-tooltip content="编辑" placement="top-start">
+         <el-button type="primary" plain size="small"  icon="el-icon-edit" @click="headEdit(scope.row)"></el-button>
+      </el-tooltip>
+      <el-tooltip content="删除" placement="top-start">
          <el-button type="danger" plain size="small"  icon="el-icon-delete" @click="headDelete(scope.row.id)"></el-button>
+          </el-tooltip>
+           <el-tooltip content="分配" placement="top-start">
          <el-button type="info" plain size="small"  icon="el-icon-check"></el-button>
+         </el-tooltip>
       </template>
     </el-table-column>
   </el-table>
@@ -89,10 +96,28 @@
     <el-button type="primary" @click="add('addstr')">确 定</el-button>
   </div>
 </el-dialog>
+    <!-- 编辑对话用户弹框 -->
+    <el-dialog title="编辑用户" :before-close="handleClose2" :visible.sync="editDialogFormVisible">
+  <el-form :model="edit" :rules="rules" ref="addstr">
+    <el-form-item label="用户名" :label-width="formLabelWidth">
+      <el-input v-model="edit.username"  :disabled="true" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="邮箱"  :label-width="formLabelWidth">
+      <el-input v-model="edit.email"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="手机号" :label-width="formLabelWidth">
+      <el-input v-model="edit.mobile" auto-complete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="editquxiao">取 消</el-button>
+    <el-button type="primary" @click="editbtn('addstr')">确 定</el-button>
+  </div>
+</el-dialog>
   </div>
 </template>
 <script>
-import { getUser, AddUsers, getDelete, amendState } from '@/api'
+import { getUser, AddUsers, getDelete, amendState, editUser } from '@/api'
 export default {
   data () {
     // 自定义效验
@@ -118,17 +143,23 @@ export default {
         email: '',
         mobile: ''
       },
+      edit: {
+        username: '',
+        email: '',
+        mobile: '',
+        id: ''
+      },
+      editDialogFormVisible: false,
       rules: {
         // rules名字和用户/密码名一样才有效果
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
         email: [
           // 自定义效验规则
-          { required: true, validator: checkEmail, trigger: 'blur' }],
+          { required: true, validator: checkEmail, trigger: 'blur' }
+        ],
         mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }]
       },
       formLabelWidth: '90px',
@@ -191,14 +222,13 @@ export default {
       this.$refs[aa].validate(isPass => {
         if (isPass) {
           //  3.0添加用户
-          AddUsers(this.Userform)
-            .then(res => {
-              console.log(res)
-              // 刷新
-              this.init()
-              // 清空
-              this.Userform = {}
-            })
+          AddUsers(this.Userform).then(res => {
+            console.log(res)
+            // 刷新
+            this.init()
+            // 清空
+            this.Userform = {}
+          })
         }
       })
     },
@@ -220,10 +250,10 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        // 4.0删除请求
-        getDelete(id)
-          .then(res => {
+      })
+        .then(() => {
+          // 4.0删除请求
+          getDelete(id).then(res => {
             if (res.data.meta.status === 200) {
               this.$message({
                 type: 'success',
@@ -233,24 +263,57 @@ export default {
               this.$message.error(res.data.meta.msg)
             }
           })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
         })
-      })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 5.0点击切换状态
     amendUser (row) {
       // 5.0发切换状态请求
-      amendState(row.id, row.mg_state)
-        .then(res => {
-          if (res.data.meta.status === 200) {
-            this.$message(res.data.meta.msg)
-          } else {
-            this.error(res.data.meta.msg)
-          }
-        })
+      amendState(row.id, row.mg_state).then(res => {
+        if (res.data.meta.status === 200) {
+          this.$message(res.data.meta.msg)
+        } else {
+          this.error(res.data.meta.msg)
+        }
+      })
+    },
+    // 6.0点击编辑按钮
+    headEdit (row) {
+      this.editDialogFormVisible = true
+      // 获取要编辑的信息
+      this.edit.username = row.username
+      this.edit.email = row.email
+      this.edit.mobile = row.mobile
+      this.edit.id = row.id
+    },
+    // 6.0点击确定
+    editbtn () {
+      this.editDialogFormVisible = false
+      // 6.0发编辑请求
+      editUser(this.edit.id, {
+        email: this.edit.email,
+        mobile: this.edit.mobile
+      }).then(res => {
+        if (res.data.meta.status === 200) {
+          this.$message(res.data.meta.msg)
+          this.init()
+        } else {
+          this.error(res.data.meta.msg)
+        }
+      })
+    },
+    // 6.0点击取消
+    editquxiao () {
+      this.editDialogFormVisible = false
+    },
+    // 点击x和外部取消
+    handleClose2 () {
+      this.editDialogFormVisible = false
     }
   },
   mounted () {

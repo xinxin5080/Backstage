@@ -36,3 +36,5 @@ export const getDelete = id => axios.delete(`/users/${id}`)
 
 // 5.0修改用户状态
 export const amendState = (uid, type) => axios.put(`/users/${uid}/state/${type}`)
+// 6.0编辑编辑用户提交
+export const editUser = (id, obj) => axios.put(`/users/${id}`, obj)
