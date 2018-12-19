@@ -33,3 +33,6 @@ export const AddUsers = obj => {
 
 // 4.0删除用户
 export const getDelete = id => axios.delete(`/users/${id}`)
+
+// 5.0修改用户状态
+export const amendState = (uid, type) => axios.put(`/users/${uid}/state/${type}`)

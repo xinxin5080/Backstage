@@ -37,9 +37,11 @@
     <el-table-column
       label="切换状态">
       <!-- 在里面放标签/组件要加插槽 -->
+      <!-- 将状态与其绑定 v-model="scope.row.mg_state"-->
        <template slot-scope="scope">
        <el-switch
-        v-model="switchVal"
+       @change="amendUser(scope.row)"
+        v-model="scope.row.mg_state"
         active-color="#13ce66"
         inactive-color="#ff4949">
       </el-switch>
@@ -90,7 +92,7 @@
   </div>
 </template>
 <script>
-import { getUser, AddUsers, getDelete } from '@/api'
+import { getUser, AddUsers, getDelete, amendState } from '@/api'
 export default {
   data () {
     // 自定义效验
@@ -130,7 +132,6 @@ export default {
         mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }]
       },
       formLabelWidth: '90px',
-      value3: true,
       switchVal: '',
       seekVal: '', // 搜索框的绑定的内容
       addDialogFormVisible: false, // 添加用户显示
@@ -238,6 +239,18 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    // 5.0点击切换状态
+    amendUser (row) {
+      // 5.0发切换状态请求
+      amendState(row.id, row.mg_state)
+        .then(res => {
+          if (res.data.meta.status === 200) {
+            this.$message(res.data.meta.msg)
+          } else {
+            this.error(res.data.meta.msg)
+          }
+        })
     }
   },
   mounted () {
