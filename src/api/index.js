@@ -26,3 +26,7 @@ export const Login = obj => axios.post('/login', obj)
 export const getUser = obj => {
   return axios.get('/users', { params: obj })
 }
+// 3.0添加用户
+export const AddUsers = obj => {
+  return axios.post('/users', obj)
+}

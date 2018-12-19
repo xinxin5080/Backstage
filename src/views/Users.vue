@@ -10,7 +10,7 @@
     <el-input placeholder="请输入内容" v-model="seekVal" class="input">
     <el-button slot="append" icon="el-icon-search" @click='seek'></el-button>
   </el-input>
-   <el-button type="primary" plain class="add">添加用户</el-button>
+   <el-button type="primary" plain class="add" @click="addatr">添加用户</el-button>
    <!-- 用户列表 -->
    <!-- 把宽度去掉就自适应 -->
      <el-table
@@ -65,20 +65,77 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 添加用户弹框 -->
+    <el-dialog title="添加用户" :visible.sync="addDialogFormVisible">
+  <el-form :model="Userform" :rules="rules" ref="addstr">
+    <el-form-item label="用户名" prop="username" :label-width="formLabelWidth">
+      <el-input v-model="Userform.username"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
+      <el-input v-model="Userform.password"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
+      <el-input v-model="Userform.email"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="手机号" prop="mobile" :label-width="formLabelWidth">
+      <el-input v-model="Userform.mobile" prop="mobile" auto-complete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="addDialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="add('addstr')">确 定</el-button>
+  </div>
+</el-dialog>
   </div>
 </template>
 <script>
-import { getUser } from '@/api'
+import { getUser, AddUsers } from '@/api'
 export default {
   data () {
+    // 自定义效验
+    var checkEmail = (rule, value, callback) => {
+      if (value === '') {
+        return callback(new Error('邮箱不能为空'))
+      } else {
+        // 正则
+        let eamailRef = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/
+        if (eamailRef.test(value)) {
+          callback()
+        } else {
+          callback(new Error('请输入正确的邮箱格式'))
+        }
+      }
+    }
+
     return {
       tableData: [],
+      Userform: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      },
+      rules: {
+        // rules名字和用户/密码名一样才有效果
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        email: [
+          // 自定义效验规则
+          { required: true, validator: checkEmail, trigger: 'blur' }],
+        mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }]
+      },
+      formLabelWidth: '90px',
       value3: true,
       switchVal: '',
       seekVal: '', // 搜索框的绑定的内容
-      pagesize: 2, // 每页显示几条
+      addDialogFormVisible: false, // 添加用户显示
+      pagesize: 10, // 每页显示几条
       currentpage: 1, // 当前页数
-      total: 0// 总数
+      total: 0 // 总数
     }
   },
   methods: {
@@ -97,26 +154,49 @@ export default {
       // 刷新列表
       this.init()
     },
-    // 请求列表数据，定义的函数不要写在mounted
+    // 2.0请求列表数据，定义的函数不要写在mounted
     init () {
-      getUser({ query: this.seekVal, pagenum: this.currentpage, pagesize: this.pagesize })
-        .then(res => {
-          if (res.data.meta.status === 200) {
-            console.log(res.data)
-            this.tableData = res.data.data.users
-            // 获取总页数
-            this.total = res.data.data.total
-          }
-        })
+      getUser({
+        query: this.seekVal,
+        pagenum: this.currentpage,
+        pagesize: this.pagesize
+      }).then(res => {
+        if (res.data.meta.status === 200) {
+          console.log(res.data)
+          this.tableData = res.data.data.users
+          // 获取总页数
+          this.total = res.data.data.total
+        }
+      })
     },
     // 搜索
     seek () {
-    // 因为init在vue的实例中，所以需要用this
-    // 将query定义成搜索框双向绑定的值，刚开始时时空的，
-    // 点击搜索时将搜索框的值作为参数传递过去
+      // 因为init在vue的实例中，所以需要用this
+      // 将query定义成搜索框双向绑定的值，刚开始时时空的，
+      // 点击搜索时将搜索框的值作为参数传递过去
       this.init()
       // 清空
       this.seekVal = ''
+    },
+    // 点击
+    addatr () {
+      this.addDialogFormVisible = true
+    },
+    // 点击确定
+    add (aa) {
+      this.addDialogFormVisible = false
+      // 效验正确再发请求
+      this.$refs[aa].validate(isPass => {
+        if (isPass) {
+          //  3.0添加用户
+          AddUsers(this.Userform)
+            .then(res => {
+              console.log(res)
+              // 刷新
+              this.init()
+            })
+        }
+      })
     }
   },
   mounted () {
