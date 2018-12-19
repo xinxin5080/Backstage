@@ -7,7 +7,7 @@ axios.interceptors.request.use(function (config) {
   // console.log(config)
   // 获取token
   let mytoken = localStorage.getItem('mytoken')
-  console.log(mytoken)
+  // console.log(mytoken)
   // 判断有无token
   if (mytoken) {
     // 设置进请求头config.headers是请求头,Authorization是后台要传递的
@@ -23,6 +23,6 @@ axios.interceptors.request.use(function (config) {
 // 一句话是可以去掉return,大括号
 export const Login = obj => axios.post('/login', obj)
 // 2.0用户数据列表
-// export const getUser = obj => {
-//   return axios.get('/users', { params: obj })
-// }
+export const getUser = obj => {
+  return axios.get('/users', { params: obj })
+}
