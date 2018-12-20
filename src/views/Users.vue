@@ -13,7 +13,9 @@
    <el-button type="primary" plain class="add" @click="addatr">添加用户</el-button>
    <!-- 用户列表 -->
    <!-- 把宽度去掉就自适应 -->
+    <!-- v-loading="loading"加载框 -->
      <el-table
+      v-loading="loading"
      class="mt-15"
     :data="tableData"
     border
@@ -59,7 +61,7 @@
          <el-button type="danger" plain size="small"  icon="el-icon-delete" @click="headDelete(scope.row.id)"></el-button>
           </el-tooltip>
            <el-tooltip content="分配" placement="top-start">
-         <el-button type="info" plain size="small"  icon="el-icon-check"></el-button>
+         <el-button type="info" plain size="small"  icon="el-icon-check" @click="headrole(scope.row)"></el-button>
          </el-tooltip>
       </template>
     </el-table-column>
@@ -114,10 +116,32 @@
     <el-button type="primary" @click="editbtn('addstr')">确 定</el-button>
   </div>
 </el-dialog>
+ <!-- 分配角色对话框 -->
+     <el-dialog title="分配角色" :visible.sync="RoleDialogFormVisible">
+  <el-form :model="role" :rules="rules" ref="addstr">
+    <el-form-item label="当前的用户名" :label-width="formLabelWidth">
+      <el-input v-model="role.username"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="请选择角色"  :label-width="formLabelWidth">
+      <el-select v-model="roleID" placeholder="请选择">
+    <el-option
+      v-for="item in roleData"
+      :key="item.id"
+      :label="item.roleName"
+      :value="item.id">
+    </el-option>
+  </el-select>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="editquxiao">取 消</el-button>
+    <el-button type="primary" @click="roleBtn">授 权</el-button>
+  </div>
+</el-dialog>
   </div>
 </template>
 <script>
-import { getUser, AddUsers, getDelete, amendState, editUser } from '@/api'
+import { getUser, AddUsers, getDelete, amendState, editUser, roleList, accredit } from '@/api'
 export default {
   data () {
     // 自定义效验
@@ -136,6 +160,15 @@ export default {
     }
 
     return {
+      roleData: [], // 角色列表
+      RoleDialogFormVisible: false, // 分配对话框
+      // 用户名和id
+      role: {
+        username: '',
+        id: ''
+      },
+      roleID: '', // 角色id
+      loading: true, // 加载动画
       tableData: [],
       Userform: {
         username: '',
@@ -162,7 +195,7 @@ export default {
         ],
         mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }]
       },
-      formLabelWidth: '90px',
+      formLabelWidth: '100px',
       switchVal: '',
       seekVal: '', // 搜索框的绑定的内容
       addDialogFormVisible: false, // 添加用户显示
@@ -174,14 +207,14 @@ export default {
   methods: {
     // 每页显示几条
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+      // console.log(`每页 ${val} 条`)
       // 点击时重新将pagesize参数赋值
       this.pagesize = val
       // 刷新列表
       this.init()
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
       // 点击时重新将currentpage参数赋值
       this.currentpage = val
       // 刷新列表
@@ -189,6 +222,8 @@ export default {
     },
     // 2.0请求列表数据，定义的函数不要写在mounted
     init () {
+      // 加载
+      this.loading = true
       getUser({
         query: this.seekVal,
         pagenum: this.currentpage,
@@ -199,6 +234,8 @@ export default {
           this.tableData = res.data.data.users
           // 获取总页数
           this.total = res.data.data.total
+          // 加载
+          this.loading = false
         }
       })
     },
@@ -223,7 +260,7 @@ export default {
         if (isPass) {
           //  3.0添加用户
           AddUsers(this.Userform).then(res => {
-            console.log(res)
+            // console.log(res)
             // 刷新
             this.init()
             // 清空
@@ -255,6 +292,7 @@ export default {
           // 4.0删除请求
           getDelete(id).then(res => {
             if (res.data.meta.status === 200) {
+              this.init()
               this.$message({
                 type: 'success',
                 message: '删除成功!'
@@ -314,6 +352,38 @@ export default {
     // 点击x和外部取消
     handleClose2 () {
       this.editDialogFormVisible = false
+    },
+    // 7.0点击分配角色
+    headrole (row) {
+      this.RoleDialogFormVisible = true
+      // 赋值
+      this.role.username = row.username// 用户名
+      this.role.id = row.id// 用户id
+      // 7.1解决显示问题
+      this.roleID = row.role_name
+      // 7.0获取角色泪飚
+      roleList()
+        .then(res => {
+          if (res.data.meta.status === 200) {
+            this.roleData = res.data.data
+          } else {
+            this.error(res.data.meta.msg)
+          }
+        })
+    },
+    // 8.0点击授权
+    roleBtn () {
+      // 角色id选择的时候会自动获取，和model绑定即可
+      console.log(this.roleID)
+      accredit(this.role.id, { rid: this.roleID })
+        .then(res => {
+          if (res.data.meta.status === 200) {
+            this.$message(res.data.meta.msg)
+          } else {
+            this.error(res.data.meta.msg)
+          }
+        })
+      this.RoleDialogFormVisible = false
     }
   },
   mounted () {

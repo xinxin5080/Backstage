@@ -38,3 +38,7 @@ export const getDelete = id => axios.delete(`/users/${id}`)
 export const amendState = (uid, type) => axios.put(`/users/${uid}/state/${type}`)
 // 6.0编辑编辑用户提交
 export const editUser = (id, obj) => axios.put(`/users/${id}`, obj)
+// 7.0获取角色列表
+export const roleList = () => axios.get('/roles')
+// 8.0 授权角色
+export const accredit = (id, rid) => axios.put(`/users/${id}/role`, rid)
