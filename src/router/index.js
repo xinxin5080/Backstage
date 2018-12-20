@@ -28,7 +28,11 @@ export default new Router({
       {
         path: 'rights',
         name: 'rights',
-        component: () => import(/* webpackChunkName: "rights" */ '../views/Rights.vue') }
+        component: () => import(/* webpackChunkName: "rights" */ '../views/Rights.vue') },
+      {
+        path: 'role',
+        name: 'role',
+        component: () => import(/* webpackChunkName: "rights" */ '../views/Role.vue') }
     ]
   }
   ]
