@@ -24,9 +24,14 @@
       prop="path"
       label="路径">
     </el-table-column>
+    <!-- 使用过滤器数据,使用插值作用域的形式获取数据 -->
     <el-table-column
-      prop="level"
       label="层级">
+      <template slot-scope="scoped">
+        <!-- 根据不同的层级赋值不同的属性，实现不同的颜色 -->
+        <el-tag :type="getType(scoped.row.level)"> {{scoped.row.level | filtersLevel}}</el-tag>
+
+      </template>
     </el-table-column>
   </el-table>
   </div>
@@ -45,9 +50,21 @@ export default {
   created () {
     this.init2()
   },
+  // 过滤器
+  filters: {
+    filtersLevel (level) {
+      if (level === '0') {
+        return '一级'
+      } else if (level === '1') {
+        return '二级'
+      } else {
+        return '三级'
+      }
+    }
+  },
   methods: {
     init2 () {
-      // 9.0
+      // 9.0获取所有的权限列表
       rolesList('list')
         .then(res => {
           if (res.data.meta.status === 200) {
@@ -56,6 +73,16 @@ export default {
             this.error(res.data.meta.msg)
           }
         })
+    },
+    // 实现不同层级不同颜色
+    getType (level) {
+      if (level === '0') {
+        return 'success'
+      } else if (level === '1') {
+        return 'info'
+      } else {
+        return 'warning'
+      }
     }
   }
 }
