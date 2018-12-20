@@ -42,3 +42,5 @@ export const editUser = (id, obj) => axios.put(`/users/${id}`, obj)
 export const roleList = () => axios.get('/roles')
 // 8.0 授权角色
 export const accredit = (id, rid) => axios.put(`/users/${id}/role`, rid)
+// 9.0获取所有权限列表
+export const rolesList = (type) => axios.get(`/rights/${type}`)

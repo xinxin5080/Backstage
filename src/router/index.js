@@ -24,7 +24,11 @@ export default new Router({
       {
         path: 'welcome',
         name: 'welcome',
-        component: () => import(/* webpackChunkName: "home" */ '../views/Welcome.vue') }
+        component: () => import(/* webpackChunkName: "home" */ '../views/Welcome.vue') },
+      {
+        path: 'rights',
+        name: 'rights',
+        component: () => import(/* webpackChunkName: "rights" */ '../views/Rights.vue') }
     ]
   }
   ]
