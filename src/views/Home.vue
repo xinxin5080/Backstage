@@ -59,7 +59,7 @@ export default {
       // 清除token
       localStorage.removeItem('mytoken')
       // 回到首页
-      this.$router.push({ name: '/' })
+      this.$router.push({ name: '/login' })
     },
     handleOpen (key, keyPath) {
       console.log(key, keyPath)

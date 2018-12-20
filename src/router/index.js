@@ -15,11 +15,16 @@ export default new Router({
     name: 'home',
     component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue'),
     // 重定项
-    redirect: { name: 'users' },
-    children: [{
-      path: 'users',
-      name: 'users',
-      component: () => import(/* webpackChunkName: "users" */ '../views/Users.vue') }
+    redirect: { name: 'welcome' },
+    children: [
+      {
+        path: 'users',
+        name: 'users',
+        component: () => import(/* webpackChunkName: "users" */ '../views/Users.vue') },
+      {
+        path: 'welcome',
+        name: 'welcome',
+        component: () => import(/* webpackChunkName: "home" */ '../views/Welcome.vue') }
     ]
   }
   ]
