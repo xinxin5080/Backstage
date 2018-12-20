@@ -44,3 +44,5 @@ export const roleList = () => axios.get('/roles')
 export const accredit = (id, rid) => axios.put(`/users/${id}/role`, rid)
 // 9.0获取所有权限列表
 export const rolesList = (type) => axios.get(`/rights/${type}`)
+// 10.删除角色指定权限
+export const delRole = (roleId, rightId) => axios.delete(`roles/${roleId}/rights/${rightId}`)
