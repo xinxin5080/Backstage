@@ -46,3 +46,5 @@ export const accredit = (id, rid) => axios.put(`/users/${id}/role`, rid)
 export const rolesList = (type) => axios.get(`/rights/${type}`)
 // 10.删除角色指定权限
 export const delRole = (roleId, rightId) => axios.delete(`roles/${roleId}/rights/${rightId}`)
+// 11.添加角色
+export const addsole = obj => axios.post(`/roles/`, obj)

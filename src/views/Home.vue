@@ -76,10 +76,10 @@ export default {
       this.$router.push({ name: '/login' })
     },
     handleOpen (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     handleClose (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     }
   },
   mounted () {

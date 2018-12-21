@@ -7,7 +7,7 @@
       <el-breadcrumb-item>角色列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 添加角色 -->
-    <el-button type="primary" plain>添加角色</el-button>
+    <el-button type="primary" plain @click="addBtn">添加角色</el-button>
      <!-- 管理列表 -->
      <el-table
       v-loading="loading"
@@ -65,21 +65,51 @@
       <el-tooltip content="删除" placement="top-start">
          <el-button type="danger" plain size="small"  icon="el-icon-delete" ></el-button>
           </el-tooltip>
-           <el-tooltip content="分配" placement="top-start">
+           <el-tooltip content="授权" placement="top-start">
          <el-button type="info" plain size="small"  icon="el-icon-check"></el-button>
          </el-tooltip>
       </template>
     </el-table-column>
   </el-table>
+  <!-- 添加角色对话框 -->
+      <el-dialog title="添加角色" :before-close="handleClose" :visible.sync="addRoleDialogFormVisible">
+  <el-form :model="addUser" :rules="rules" ref="addstr">
+    <el-form-item label="角色名称" prop="username" :label-width="formLabelWidth">
+      <el-input v-model="addUser.username"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="角色描述" prop="miaoshu" :label-width="formLabelWidth">
+      <el-input v-model="addUser.miaoshu"  auto-complete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="quxiao">取 消</el-button>
+    <el-button type="primary" @click="yesbtn('addstr')">确 定</el-button>
+  </div>
+</el-dialog>
+ <!-- 添加角色对话框 -->
   </div>
 </template>
 <script>
-import { roleList, delRole } from '@/api'
+import { roleList, delRole, addsole } from '@/api'
 export default {
   data () {
     return {
       roleList: [],
-      loading: false
+      loading: false,
+      addRoleDialogFormVisible: false,
+      formLabelWidth: '100px',
+      rules: {
+        // rules名字和用户/密码名一样才有效果
+        username: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ],
+        miaoshu: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
+      },
+      // 添加用户
+      addUser: {
+        username: '',
+        miaoshu: ''
+      }
     }
   },
   methods: {
@@ -88,7 +118,7 @@ export default {
       roleList()
         .then(res => {
           if (res.data.meta.status === 200) {
-            console.log(res)
+            // console.log(res)
             this.roleList = res.data.data
           } else {
             this.error(res.data.meta.msg)
@@ -111,6 +141,40 @@ export default {
             this.error(res.data.meta.msg)
           }
         })
+    },
+    // 11点击添加角色
+    addBtn () {
+      this.addRoleDialogFormVisible = true
+    },
+    // 11点击确定
+    yesbtn (aa) {
+      this.addRoleDialogFormVisible = false
+      // 11进行效应
+      this.$refs[aa].validate(isOk => {
+        // 11.添加角色
+        addsole({ roleName: this.addUser.username, roleDesc: this.addUser.miaoshu })
+        // 清空
+          .then(res => {
+            if (res.data.meta.status === 201) {
+              this.$message(res.data.meta.msg)
+              this.addUser = {}
+              // 11刷新
+              this.init3()
+            } else {
+              this.error(res.data.meta.msg)
+            }
+          })
+      })
+    },
+    // 11点击取消
+    quxiao () {
+      this.addUser = {}
+      this.addRoleDialogFormVisible = false
+    },
+    // 11点击x和外部取消
+    handleClose () {
+      this.addUser = {}
+      this.addRoleDialogFormVisible = false
     }
   },
   created () {
