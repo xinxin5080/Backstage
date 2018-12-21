@@ -63,7 +63,7 @@
          <el-button type="primary" plain size="small"  icon="el-icon-edit" ></el-button>
       </el-tooltip>
       <el-tooltip content="删除" placement="top-start">
-         <el-button type="danger" plain size="small"  icon="el-icon-delete" ></el-button>
+         <el-button type="danger" plain size="small"  icon="el-icon-delete" @click="Delclick(scope.row.id)"></el-button>
           </el-tooltip>
            <el-tooltip content="授权" placement="top-start">
          <el-button type="info" plain size="small"  icon="el-icon-check"></el-button>
@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import { roleList, delRole, addsole } from '@/api'
+import { roleList, delRole, addsole, delroleId } from '@/api'
 export default {
   data () {
     return {
@@ -175,6 +175,35 @@ export default {
     handleClose () {
       this.addUser = {}
       this.addRoleDialogFormVisible = false
+    },
+    // 12.点击删除按钮
+    Delclick (id) {
+      // 12.弹框
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 12.删除请求
+        delroleId(id)
+          .then(res => {
+            if (res.data.meta.status === 200) {
+              this.init3()
+              this.$message(res.data.meta.msg)
+            } else {
+              this.error(res.data.meta.msg)
+            }
+          })
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   },
   created () {
