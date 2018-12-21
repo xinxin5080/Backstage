@@ -60,7 +60,7 @@
         <!-- scope.row可以获取所在行的信息 -->
       <template slot-scope="scope">
         <el-tooltip content="编辑" placement="top-start">
-         <el-button type="primary" plain size="small"  icon="el-icon-edit" ></el-button>
+         <el-button type="primary" plain size="small"  icon="el-icon-edit" @click="editRole(scope.row)"></el-button>
       </el-tooltip>
       <el-tooltip content="删除" placement="top-start">
          <el-button type="danger" plain size="small"  icon="el-icon-delete" @click="Delclick(scope.row.id)"></el-button>
@@ -87,10 +87,26 @@
   </div>
 </el-dialog>
  <!-- 添加角色对话框 -->
+  <!-- 编辑角色对话框 -->
+      <el-dialog title="编辑角色" :before-close="handleClose1" :visible.sync="editRoleDialogFormVisible">
+  <el-form :model="editUser" :rules="rules" ref="addstr">
+    <el-form-item label="角色名称" prop="username" :label-width="formLabelWidth">
+      <el-input v-model="editUser.username"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="角色描述" prop="miaoshu" :label-width="formLabelWidth">
+      <el-input v-model="editUser.miaoshu"  auto-complete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="quxiao1">取 消</el-button>
+    <el-button type="primary" @click="editdata('addstr')">确 定</el-button>
+  </div>
+</el-dialog>
+ <!-- 编辑角色对话框 -->
   </div>
 </template>
 <script>
-import { roleList, delRole, addsole, delroleId } from '@/api'
+import { roleList, delRole, addsole, delroleId, editrole } from '@/api'
 export default {
   data () {
     return {
@@ -109,6 +125,13 @@ export default {
       addUser: {
         username: '',
         miaoshu: ''
+      },
+      // 编辑角色
+      editRoleDialogFormVisible: false,
+      editUser: {
+        username: '',
+        miaoshu: '',
+        id: ''
       }
     }
   },
@@ -204,6 +227,40 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    // 13点击编辑角色
+    editRole (row) {
+      // 赋值填充
+      this.editUser.username = row.roleName
+      this.editUser.miaoshu = row.roleDesc
+      this.editUser.id = row.id
+      this.editRoleDialogFormVisible = true
+    },
+    // 13点击确定按钮发请求
+    editdata (aa) {
+      this.editRoleDialogFormVisible = false
+      this.$refs[aa].validate(isEdit => {
+        // 发请求
+        editrole(this.editUser.id, { roleName: this.editUser.username, roleDesc: this.editUser.miaoshu })
+          .then(res => {
+            if (res.data.meta.status === 200) {
+              this.init3()
+              this.$message(res.data.meta.msg)
+            } else {
+              this.error(res.data.meta.msg)
+            }
+          })
+      })
+    },
+    // 13.点击删除按钮
+    handleClose1 () {
+      this.editRoleDialogFormVisible = false
+    },
+    // 13点击取消
+    quxiao1 () {
+      this.addUser = {}
+      this.addRoleDialogFormVisible = false
+      this.editRoleDialogFormVisible = false
     }
   },
   created () {
