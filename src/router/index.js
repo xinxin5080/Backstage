@@ -36,7 +36,11 @@ export default new Router({
       {
         path: 'goods',
         name: 'goods',
-        component: () => import(/* webpackChunkName: "goods" */ '../views/Goods.vue') }
+        component: () => import(/* webpackChunkName: "goods" */ '../views/Goods.vue') },
+      {
+        path: 'categories',
+        name: 'categories',
+        component: () => import(/* webpackChunkName: "categories" */ '../views/Categories.vue') }
     ]
   }
   ]

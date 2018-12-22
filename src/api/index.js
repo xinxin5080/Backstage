@@ -54,7 +54,7 @@ export const delroleId = id => axios.delete(`/roles/${id}`)
 export const editrole = (id, obj) => axios.put(`/roles/${id}`, obj)
 // 15.角色授权
 export const getroledata = (roleId, rids) => axios.post(`roles/${roleId}/rights`, rids)
-// 16.商品数据列表
-export const goodsList = type => axios.get(`categories`, { params: type })
+// 16.商品数据列表,接口有误.还有加两个参数.用来处理分页
+export const goodsList = (type, pagenum, pagesize) => axios.get(`categories`, { params: { type, pagenum, pagesize } })
 // 17.左侧权限
 export const menus = () => axios.get(`/menus`)
