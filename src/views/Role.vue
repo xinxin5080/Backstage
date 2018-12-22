@@ -65,8 +65,8 @@
       <el-tooltip content="删除" placement="top-start">
          <el-button type="danger" plain size="small"  icon="el-icon-delete" @click="Delclick(scope.row.id)"></el-button>
           </el-tooltip>
-           <el-tooltip content="授权" placement="top-start">
-         <el-button type="info" plain size="small"  icon="el-icon-check"></el-button>
+           <el-tooltip content="授权角色" placement="top-start">
+         <el-button type="info" plain size="small"  @click="getRole(scope.row)" icon="el-icon-check"></el-button>
          </el-tooltip>
       </template>
     </el-table-column>
@@ -103,10 +103,28 @@
   </div>
 </el-dialog>
  <!-- 编辑角色对话框 -->
+  <!-- 授权角色对话框 -->
+      <el-dialog title="授权角色" :visible.sync="getRoleDialogFormVisible">
+        <!-- 树结构 -->
+        <div class="tree-box">
+        <el-tree
+          :data="getRolisList"
+          show-checkbox
+          node-key="id"
+          :default-expand-all=true
+          :props="defaultProps">
+        </el-tree>
+        </div>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="quxiao3">取 消</el-button>
+    <el-button type="primary" @click="rolebtn">确 定</el-button>
+  </div>
+</el-dialog>
+ <!-- 授权角色对话框 -->
   </div>
 </template>
 <script>
-import { roleList, delRole, addsole, delroleId, editrole } from '@/api'
+import { roleList, delRole, addsole, delroleId, editrole, rolesList } from '@/api'
 export default {
   data () {
     return {
@@ -132,6 +150,13 @@ export default {
         username: '',
         miaoshu: '',
         id: ''
+      },
+      // 授权角色
+      getRoleDialogFormVisible: false,
+      getRolisList: [],
+      defaultProps: {
+        children: 'children',
+        label: 'authName'// 展示汉字
       }
     }
   },
@@ -261,6 +286,26 @@ export default {
       this.addUser = {}
       this.addRoleDialogFormVisible = false
       this.editRoleDialogFormVisible = false
+    },
+    // 14.点击授权
+    getRole () {
+      this.getRoleDialogFormVisible = true
+      // 14.点击授权,发请求
+      rolesList('tree')
+        .then(res => {
+          if (res.data.meta.status === 200) {
+            this.getRolisList = res.data.data
+          } else {
+            this.error(res.data.meta.msg)
+          }
+        })
+    },
+    // 14.点击确定
+    rolebtn () {
+      this.getRoleDialogFormVisible = false
+    },
+    quxiao3 () {
+      this.getRoleDialogFormVisible = false
     }
   },
   created () {
@@ -278,5 +323,9 @@ export default {
   }
   .el-tag{
     margin: 5px;
+  }
+  .tree-box{
+    height: 300px;
+    overflow: auto;
   }
 </style>
