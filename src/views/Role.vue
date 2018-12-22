@@ -34,7 +34,7 @@
                     <i v-if="strItem.authName.length>0" class="el-icon-arrow-right"></i>
                 </el-col>
                 <!-- 3 -->
-                <el-col :span="18"><el-tag  v-for="arrItem in strItem.children" :key="arrItem.id" type="danger" closable @close="DelBtn(scope.row,strItem.id)">{{arrItem.authName}}>{{arrItem.authName}}</el-tag></el-col>
+                <el-col :span="18"><el-tag  v-for="arrItem in strItem.children" :key="arrItem.id" type="danger" closable @close="DelBtn(scope.row,arrItem.id)">{{arrItem.authName}}>{{arrItem.authName}}</el-tag></el-col>
               </el-row>
               <!-- 嵌套内容 -->
             </el-col>
@@ -184,7 +184,6 @@ export default {
       // 10.删除权限
       delRole(row.id, rightId)
         .then(res => {
-          console.log(res)
           if (res.data.meta.status === 200) {
             this.$message(res.data.meta.msg)
             // 将返回剩下的所有权限赋值，避免刷新

@@ -32,7 +32,11 @@ export default new Router({
       {
         path: 'role',
         name: 'role',
-        component: () => import(/* webpackChunkName: "rights" */ '../views/Role.vue') }
+        component: () => import(/* webpackChunkName: "rights" */ '../views/Role.vue') },
+      {
+        path: 'goods',
+        name: 'goods',
+        component: () => import(/* webpackChunkName: "goods" */ '../views/Goods.vue') }
     ]
   }
   ]
