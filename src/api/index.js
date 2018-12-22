@@ -58,3 +58,5 @@ export const getroledata = (roleId, rids) => axios.post(`roles/${roleId}/rights`
 export const goodsList = (type, pagenum, pagesize) => axios.get(`categories`, { params: { type, pagenum, pagesize } })
 // 17.左侧权限
 export const menus = () => axios.get(`/menus`)
+// 18.添加分类
+export const addgoods = obj => axios.post(`/categories`, obj)
