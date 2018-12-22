@@ -50,5 +50,7 @@ export const delRole = (roleId, rightId) => axios.delete(`roles/${roleId}/rights
 export const addsole = obj => axios.post(`/roles/`, obj)
 // 12.删除角色
 export const delroleId = id => axios.delete(`/roles/${id}`)
-// 13.编辑橘色
+// 13.编辑角色
 export const editrole = (id, obj) => axios.put(`/roles/${id}`, obj)
+// 15.角色授权
+export const getroledata = (roleId, rids) => axios.post(`roles/${roleId}/rights`, rids)

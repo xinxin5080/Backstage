@@ -111,6 +111,8 @@
           :data="getRolisList"
           show-checkbox
           node-key="id"
+          ref="tree"
+          :default-checked-keys="checkedId"
           :default-expand-all=true
           :props="defaultProps">
         </el-tree>
@@ -124,7 +126,7 @@
   </div>
 </template>
 <script>
-import { roleList, delRole, addsole, delroleId, editrole, rolesList } from '@/api'
+import { roleList, delRole, addsole, delroleId, editrole, rolesList, getroledata } from '@/api'
 export default {
   data () {
     return {
@@ -157,7 +159,9 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'authName'// 展示汉字
-      }
+      },
+      checkedId: [], // 默认展示的子节点
+      atID: ''// 当前行的id
     }
   },
   methods: {
@@ -288,8 +292,27 @@ export default {
       this.editRoleDialogFormVisible = false
     },
     // 14.点击授权
-    getRole () {
+    getRole (row) {
       this.getRoleDialogFormVisible = true
+      console.log(row)
+      // 15.将角色id存储起来,给下面的请求使用
+      this.atID = row.id
+      // 14先清空数组
+      this.checkedId.length = 0
+      // 14.通过row获取当前行的默认节点,用来展示展示页面
+      // 14通过三层遍历获取到最后的节点
+      row.children.forEach(firItem => {
+        if (firItem.children && firItem.children.length > 0) {
+          firItem.children.forEach(strItem => {
+            if (strItem.children && strItem.children.length > 0) {
+              strItem.children.forEach(arrItem => {
+                // 获取到最后的节点,最佳到数组
+                this.checkedId.push(arrItem.id)
+              })
+            }
+          })
+        }
+      })
       // 14.点击授权,发请求
       rolesList('tree')
         .then(res => {
@@ -300,9 +323,23 @@ export default {
           }
         })
     },
-    // 14.点击确定
+    // 15.点击确定
     rolebtn () {
       this.getRoleDialogFormVisible = false
+      // 通过这个获取到权限id
+      let qID = this.$refs.tree.getCheckedKeys()
+      // 转成字符串
+      let tID = qID.join(',')
+      // 15.请求授权,需要角色id(通过上面的row)和权限id
+      getroledata(this.atID, { rids: tID })
+        .then(res => {
+          if (res.data.meta.status === 200) {
+            this.$message(res.data.meta.msg)
+            this.init3()
+          } else {
+            this.error(res.data.meta.msg)
+          }
+        })
     },
     quxiao3 () {
       this.getRoleDialogFormVisible = false
