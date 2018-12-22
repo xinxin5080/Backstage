@@ -7,45 +7,20 @@
    <!-- 修改点击项的颜色background-color -->
    <!-- 开启router router index改为路由path跳转-->
     <el-menu
+      :unique-opened="opened"
       background-color="#f9f9f9"
       router
       class="el-menu-admin"
-      @open="handleOpen"
-      @close="handleClose"
       :collapse="iscollapse"
       >
-      <el-submenu index="1">
+      <el-submenu index="1" v-for="item in menusList" :key="item.id">
         <template slot="title">
           <i class="el-icon-location"></i>
-          <span>用户管理</span>
+          <span>{{item.authName}}</span>
         </template>
-          <el-menu-item index="/users">
+          <el-menu-item :index="arritem.path" v-for="arritem in item.children" :key="arritem.id">
                <i class="el-icon-menu"></i>
-               用户列表
-            </el-menu-item>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>权限管理</span>
-        </template>
-          <el-menu-item index="/rights">
-               <i class="el-icon-menu"></i>
-               权限列表
-            </el-menu-item>
-          <el-menu-item index="/role">
-               <i class="el-icon-menu"></i>
-               角色列表
-            </el-menu-item>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>商品管理</span>
-        </template>
-          <el-menu-item index="/goods">
-               <i class="el-icon-menu"></i>
-               商品列表
+               {{arritem.authName}}
             </el-menu-item>
       </el-submenu>
     </el-menu>
@@ -65,12 +40,15 @@
 </div>
 </template>
 <script>
+import { menus } from '@/api'
 // 注意export default是一定要是使用
 export default {
   data () {
     return {
       iscollapse: false,
-      username: ''
+      opened: true,
+      username: '',
+      menusList: []
     }
   },
   methods: {
@@ -97,6 +75,11 @@ export default {
     let myusername = localStorage.getItem('username')
     // 赋值
     this.username = myusername
+    // 17.左侧权限
+    menus()
+      .then(res => {
+        this.menusList = res.data.data
+      })
   }
 }
 </script>

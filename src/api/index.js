@@ -55,4 +55,6 @@ export const editrole = (id, obj) => axios.put(`/roles/${id}`, obj)
 // 15.角色授权
 export const getroledata = (roleId, rids) => axios.post(`roles/${roleId}/rights`, rids)
 // 16.商品数据列表
-export const goods = type => axios.get(`categories`, type)
+export const goodsList = type => axios.get(`categories`, { params: type })
+// 17.左侧权限
+export const menus = () => axios.get(`/menus`)
