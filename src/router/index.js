@@ -40,7 +40,11 @@ export default new Router({
       {
         path: 'categories',
         name: 'categories',
-        component: () => import(/* webpackChunkName: "categories" */ '../views/Categories.vue') }
+        component: () => import(/* webpackChunkName: "categories" */ '../views/Categories.vue') },
+      {
+        path: 'add',
+        name: 'add',
+        component: () => import(/* webpackChunkName: "add" */ '../views/Goodsadd.vue') }
     ]
   }
   ]

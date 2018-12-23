@@ -11,12 +11,12 @@
       :unique-opened="opened"
       background-color="#f9f9f9"
       router
-      @open="handleOpen" 
+      @open="handleOpen"
       @close="handleClose"
       class="el-menu-admin"
       :collapse="iscollapse"
       >
-      <el-submenu :index="item.id" v-for="item in menusList" :key="item.id">
+      <el-submenu :index="item.path" v-for="item in menusList" :key="item.id">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>{{item.authName}}</span>
