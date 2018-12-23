@@ -41,6 +41,8 @@
       <!-- selectedOptions保存着选中节点的id数组 -->
       <!-- defaultProps 展示字段 -->
     <el-cascader
+    placeholder="默认一级分类"
+    change-on-select
     :options="options"
     :props="defaultProps"
     v-model="selectedOptions"

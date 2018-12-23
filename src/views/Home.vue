@@ -6,14 +6,17 @@
    <!-- 折叠collapse, 宽改为auto-->
    <!-- 修改点击项的颜色background-color -->
    <!-- 开启router router index改为路由path跳转-->
+   <!-- unique-opened 是否开启只打开一个 index也要赋值,如果值相同会失效-->
     <el-menu
       :unique-opened="opened"
       background-color="#f9f9f9"
       router
+      @open="handleOpen" 
+      @close="handleClose"
       class="el-menu-admin"
       :collapse="iscollapse"
       >
-      <el-submenu index="1" v-for="item in menusList" :key="item.id">
+      <el-submenu :index="item.id" v-for="item in menusList" :key="item.id">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>{{item.authName}}</span>
