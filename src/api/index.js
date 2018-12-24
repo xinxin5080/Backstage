@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:8888/api/private/v1'
+axios.defaults.baseURL = '/api/private/v1'
 // axiso拦截器
 axios.interceptors.request.use(function (config) {
   // config里面有请求头,请求成功将token设置进请求头
