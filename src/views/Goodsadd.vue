@@ -66,7 +66,6 @@ export default {
 
     }
   },
-  // 上传图片,ECharts图标,
   methods: {
     handleClick (tab, event) {
       this.active = parseInt(tab.index)
