@@ -44,7 +44,11 @@ export default new Router({
       {
         path: 'add',
         name: 'add',
-        component: () => import(/* webpackChunkName: "add" */ '../views/Goodsadd.vue') }
+        component: () => import(/* webpackChunkName: "add" */ '../views/Goodsadd.vue') },
+      {
+        path: 'reports',
+        name: 'reports',
+        component: () => import(/* webpackChunkName: "reports" */ '../views/Reports.vue') }
     ]
   }
   ]

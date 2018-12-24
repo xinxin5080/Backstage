@@ -3,9 +3,18 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './style/index.scss'
+import VueQuillEditor from 'vue-quill-editor'
+
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 // 引进
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import ECharts from 'vue-echarts'
+Vue.component('chart', ECharts)
+Vue.use(VueQuillEditor)
 // 使用
 Vue.use(ElementUI)
 Vue.config.productionTip = false

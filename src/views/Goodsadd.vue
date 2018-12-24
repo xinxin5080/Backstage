@@ -36,7 +36,17 @@
         <el-button size="small" type="primary">点击上传</el-button>
       </el-upload>
         </el-tab-pane>
-      <el-tab-pane label="商品内容" name="fourth">商品内容</el-tab-pane>
+      <el-tab-pane label="商品内容" name="fourth">
+        <!--  -->
+         <quill-editor
+          v-model="content"
+          ref="myQuillEditor"
+          :options="editorOption"
+          @blur="onEditorBlur($event)"
+          @focus="onEditorFocus($event)"
+          @ready="onEditorReady($event)">
+        </quill-editor>
+      </el-tab-pane>
     </el-tabs>
 </template>
   </div>
@@ -50,11 +60,13 @@ export default {
       fileList2: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
       headers: {
         Authorization: localStorage.getItem('mytoken')
-      }
+      },
+      content: null,
+      editorOption: {}
 
     }
   },
-
+  // 上传图片,ECharts图标,
   methods: {
     handleClick (tab, event) {
       this.active = parseInt(tab.index)
@@ -69,7 +81,7 @@ export default {
     },
     // 上传成功之前的函数
     headleUpload (file) {
-      console.log('file: ', file.size)
+      // console.log('file: ', file.size)
       // 判断图片大小
       if (file.size > 60000) {
         this.$message('图片不得大于58k')
@@ -85,6 +97,20 @@ export default {
       } else {
         this.$message(response.meta.msg)
       }
+    },
+    onEditorBlur (quill) {
+      // console.log('editor blur!', quill)
+    },
+    onEditorFocus (quill) {
+      // console.log('editor focus!', quill)
+    },
+    onEditorReady (quill) {
+      // console.log('editor ready!', quill)
+    }
+  },
+  computed: {
+    editor () {
+      return this.$refs.myQuillEditor.quill
     }
   }
 }
@@ -97,5 +123,15 @@ export default {
     line-height: 45px;
     margin-bottom: 15px;
   }
-
+  .add-goods {
+  .el-tabs {
+    height: 400px;
+  }
+}
+.quill-editor {
+  height: 400px;
+  .ql-container {
+    height: 300px;
+  }
+}
 </style>
